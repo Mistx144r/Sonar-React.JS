@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-function PlaylistsSideBar() {
-  return (
-    <>
-      <div className="flex w-1/4 h-full bg-zinc-900 rounded-xl lg:w-1/12"></div>
-    </>
-=======
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import { ExternalLink, Music, Pencil, Pin, Plus, Trash } from "lucide-react";
@@ -231,7 +224,6 @@ function PlaylistsSideBar() {
         {menuElement}
       </div>
     </div>
->>>>>>> b179d2f (Novas Features Como Pagina Do Artista, Playlist, Album, Pagina De Pesquisa, Playlist Na Sidebar, Mini Player, Header E Controller, Context Para Controlar As Musicas Universalmente No Aplicativo, Pagina De Login, Proteção De Rotas Com O React Router. Consertei Varios Bugs No Caminho.)
   );
 }
 

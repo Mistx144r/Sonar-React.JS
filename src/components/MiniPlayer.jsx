@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-function MiniPlayer() {
-  return (
-    <>
-      <div className="flex w-10/12 h-full bg-zinc-800 lg:w-1/3"></div>
-=======
 import { usePlayer } from "../contexts/PlayerContext.jsx";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -316,7 +310,6 @@ function MiniPlayer() {
           )}
         </div>
       </div>
->>>>>>> b179d2f (Novas Features Como Pagina Do Artista, Playlist, Album, Pagina De Pesquisa, Playlist Na Sidebar, Mini Player, Header E Controller, Context Para Controlar As Musicas Universalmente No Aplicativo, Pagina De Login, Proteção De Rotas Com O React Router. Consertei Varios Bugs No Caminho.)
     </>
   );
 }

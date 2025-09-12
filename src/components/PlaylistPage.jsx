@@ -33,8 +33,6 @@ function PlaylistPage() {
     isPlaying,
   } = usePlayer();
 
-  const navigate = useNavigate();
-
   const [error, setError] = useState("");
   const [playlistData, setPlaylistData] = useState();
   const [playlistMusics, setPlaylistMusics] = useState([]);

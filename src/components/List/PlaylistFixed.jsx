@@ -1,10 +1,7 @@
-import { useNavigate } from "react-router-dom";
 import ImageWithPlaceholder from "../album/ImageWithPlaceholder";
 import { ExternalLink } from "lucide-react";
 
 function PlaylistFixed() {
-  const navigate = useNavigate();
-
   return (
     <>
       <div className="group flex bg-neutral-500 bg-opacity-20 w-full mx-auto items-center gap-2 rounded-lg hover:bg-opacity-40 transition-all cursor-pointer">

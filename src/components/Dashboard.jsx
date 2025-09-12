@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-function Dashboard() {
-  return (
-    <>
-      <div className="flex w-full h-full rounded-xl bg-background"></div>
-=======
 import axios from "axios";
 import { useEffect, useState } from "react";
 import PlaylistFixed from "./List/PlaylistFixed";
@@ -114,7 +108,6 @@ function Dashboard() {
           </div>
         </motion.div>
       </div>
->>>>>>> b179d2f (Novas Features Como Pagina Do Artista, Playlist, Album, Pagina De Pesquisa, Playlist Na Sidebar, Mini Player, Header E Controller, Context Para Controlar As Musicas Universalmente No Aplicativo, Pagina De Login, Proteção De Rotas Com O React Router. Consertei Varios Bugs No Caminho.)
     </>
   );
 }
