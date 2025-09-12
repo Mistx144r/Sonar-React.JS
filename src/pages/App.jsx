@@ -3,20 +3,6 @@ import Dashboard from "../components/Dashboard.jsx";
 import PlaylistsSideBar from "../components/PlaylistsSideBar.jsx";
 import MiniPlayer from "../components/MiniPlayer.jsx";
 import PlayerController from "../components/PlayerController.jsx";
-<<<<<<< HEAD
-
-function App() {
-  return (
-    <div className="flex flex-col w-screen h-screen select-none">
-      <Header />
-      <div className="flex flex-1 gap-3 px-5">
-        <PlaylistsSideBar />
-        <Dashboard />
-        <MiniPlayer />
-      </div>
-      <PlayerController />
-    </div>
-=======
 import ArtistProfile from "../components/ArtistProfile.jsx";
 import NotFound from "./NotFound.jsx";
 import { usePlayer } from "../contexts/PlayerContext.jsx";
@@ -107,7 +93,6 @@ function App() {
         </div>
       </ProtectedRoute>
     </ArtistProfileProvider>
->>>>>>> b179d2f (Novas Features Como Pagina Do Artista, Playlist, Album, Pagina De Pesquisa, Playlist Na Sidebar, Mini Player, Header E Controller, Context Para Controlar As Musicas Universalmente No Aplicativo, Pagina De Login, Proteção De Rotas Com O React Router. Consertei Varios Bugs No Caminho.)
   );
 }
 
