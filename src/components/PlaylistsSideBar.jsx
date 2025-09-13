@@ -76,7 +76,7 @@ function PlaylistsSideBar() {
     const token = JSON.parse(localStorage.getItem("userToken"));
 
     const createPromise = axios.post(
-      "http://localhost:3000/playlists/",
+      `${import.meta.env.VITE_SERVER_IP}/playlists/`,
       { name: playlistName },
       {
         headers: {
