@@ -4,8 +4,10 @@ import { useParams } from "react-router-dom";
 import MusicPlaylist from "./List/MusicPlaylist";
 import AlbumList from "./List/AlbumList";
 import BestResult from "./Search/BestResult";
+import { usePlayer } from "../contexts/PlayerContext";
 
 function SearchPage() {
+  const { setLyricsOpen } = usePlayer();
   const { query } = useParams();
   const [isLoading, setLoading] = useState(true);
 
@@ -15,6 +17,7 @@ function SearchPage() {
 
   useEffect(() => {
     if (!query) return;
+    setLyricsOpen(false);
 
     async function fetchSearchData() {
       setLoading(true);

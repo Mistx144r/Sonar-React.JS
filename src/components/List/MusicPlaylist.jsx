@@ -105,6 +105,7 @@ function MusicPlaylist(props) {
         ),
         onClick: () => {
           setIsAddModal(true);
+          handleAddMusicToPlaylist();
         },
       },
     ],
@@ -437,7 +438,7 @@ function MusicPlaylist(props) {
                 <ImageWithPlaceholder
                   src={musicAlbumCDN}
                   alt={"No Song"}
-                  size={12}
+                  size={48}
                 />
 
                 <div

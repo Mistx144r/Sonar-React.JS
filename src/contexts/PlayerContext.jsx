@@ -1,7 +1,6 @@
-import { createContext, useState, useContext, useRef } from "react";
+import { createContext, useState, useContext, useRef, useEffect } from "react";
 import { Howl } from "howler";
 import { toast } from "react-toastify";
-import axios from "axios";
 
 const PlayerContext = createContext();
 const ws = new WebSocket("ws://localhost:4000");
@@ -14,7 +13,11 @@ export function PlayerProvider({ children }) {
   const [lastGreatVolume, setLastGreatVolume] = useState(0.25);
   const [volume, setVolume] = useState(0.25);
   const [isMuted, setMuted] = useState(false);
+  const [currentMusicTime, setCurrentMusicTime] = useState(0);
+
   const [isSideBarOpen, setSideBar] = useState(false);
+  const [isLyricsOpen, setLyricsOpen] = useState(false);
+
   const howlRef = useRef(null);
   const intervalRef = useRef(null);
   const isDraggingRef = useRef(false);
@@ -26,6 +29,18 @@ export function PlayerProvider({ children }) {
   const currentIndexRef = useRef(null);
 
   const queueRef = useRef([]);
+
+  useEffect(() => {
+    let interval;
+
+    if (isPlaying && howlRef.current) {
+      interval = setInterval(() => {
+        setCurrentMusicTime(howlRef.current.seek() || 0);
+      }, 10);
+    }
+
+    return () => clearInterval(interval);
+  }, [isPlaying]);
 
   const cleanupHowl = () => {
     if (howlRef.current instanceof Howl) {
@@ -125,6 +140,19 @@ export function PlayerProvider({ children }) {
     if (isUserChange) {
       const duration = howlRef.current.duration() || 1;
       howlRef.current.seek((duration * value) / 100);
+    }
+
+    setMusicTime(value);
+  };
+
+  const setCurTime = (value, isUserChange = false) => {
+    if (!(howlRef.current instanceof Howl)) {
+      console.log("No Music!");
+      return;
+    }
+
+    if (isUserChange) {
+      howlRef.current.seek(value);
     }
 
     setMusicTime(value);
@@ -271,6 +299,10 @@ export function PlayerProvider({ children }) {
         loop,
         isLoopedState,
         isQueueLoopedState,
+        isLyricsOpen,
+        setLyricsOpen,
+        currentMusicTime,
+        setCurTime,
       }}
     >
       {children}

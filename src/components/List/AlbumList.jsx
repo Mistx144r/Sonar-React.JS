@@ -22,7 +22,7 @@ function AlbumList(albumData) {
         <ImageWithPlaceholder
           src={albumData?.coverCDN}
           alt={"Cover"}
-          size={24}
+          size={185}
         />
         <div className="flex flex-col gap-1">
           <h1 className="text-white font-semibold mt-2 w-full h-auto line-clamp-2 group-hover:text-purple-500 transition-all group-hover:underline">

@@ -15,9 +15,10 @@ import { ProtectedRoute } from "../components/ProtectedRoute.jsx";
 import PlaylistPage from "../components/PlaylistPage.jsx";
 
 import { ToastContainer } from "react-toastify";
+import LyricsPage from "../components/LyricsPage.jsx";
 
 function App() {
-  const { isSideBarOpen, currentMusic } = usePlayer();
+  const { isSideBarOpen, currentMusic, isLyricsOpen } = usePlayer();
 
   return (
     <ArtistProfileProvider>
@@ -26,54 +27,64 @@ function App() {
           <Header />
           <div className="flex h-full flex-1 gap-3">
             <PlaylistsSideBar />
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
 
-              <Route
-                path="/artist/:artistId"
-                element={
-                  <ProtectedRoute>
-                    <ArtistProfile />
-                  </ProtectedRoute>
-                }
-              />
+            <div className="flex h-full w-full relative">
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/playlist/:playlistId"
-                element={
-                  <ProtectedRoute>
-                    <PlaylistPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/artist/:artistId"
+                  element={
+                    <ProtectedRoute>
+                      <ArtistProfile />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/album/:albumId"
-                element={
-                  <ProtectedRoute>
-                    <AlbumPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/playlist/:playlistId"
+                  element={
+                    <ProtectedRoute>
+                      <PlaylistPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/search/:query"
-                element={
-                  <ProtectedRoute>
-                    <SearchPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/album/:albumId"
+                  element={
+                    <ProtectedRoute>
+                      <AlbumPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+                <Route
+                  path="/search/:query"
+                  element={
+                    <ProtectedRoute>
+                      <SearchPage />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+
+              {isLyricsOpen && currentMusic && (
+                <div className="absolute inset-0">
+                  <LyricsPage />
+                </div>
+              )}
+            </div>
+
             {isSideBarOpen && currentMusic && <MiniPlayer />}
           </div>
           <PlayerController />

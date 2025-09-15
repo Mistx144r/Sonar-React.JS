@@ -1,7 +1,104 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import sonarLogo from "../imgs/Logo_Sonar_White.png";
+import axios from "axios";
+
 export default function Register() {
+  const navigate = useNavigate();
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
-    <div className="w-screen h-screen flex items-center justify-center">
-      Register Page
+    <div className="flex items-center justify-center w-screen h-screen bg-gradient-to-br from-zinc-900 to-neutral-950">
+      <div className="w-full max-w-md select-none p-8 bg-gradient-to-b from-zinc-900 to-neutral-900 rounded-2xl shadow-xl flex flex-col items-center">
+        <img src={sonarLogo} alt="Sonar Logo" className="w-[14em]" />
+
+        <h1 className="text-center text-3xl font-bold text-white mb-6">
+          One Step Away From <br />
+          <span className="text-purple-500">The World Of Music</span>
+        </h1>
+
+        <form className="w-full flex flex-col gap-4">
+          <div className="flex flex-col">
+            <label htmlFor="name" className="text-white font-medium mb-1">
+              Nome
+            </label>
+            <input
+              id="name"
+              type="text"
+              placeholder="Marcos Silva"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              className="px-4 py-2 rounded-lg bg-zinc-800 text-white focus-within:scale-[1.02] focus-within:ring-2 ring-purple-500 transition-all outline-none"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="email" className="text-white font-medium mb-1">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              placeholder="sonar@sonar.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="px-4 py-2 rounded-lg bg-zinc-800 text-white focus-within:scale-[1.02] focus-within:ring-2 ring-purple-500 transition-all outline-none"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col relative">
+            <label htmlFor="password" className="text-white font-medium mb-1">
+              Password
+            </label>
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="************"
+              value={senha}
+              onChange={(e) => setPassword(e.target.value)}
+              className="px-4 py-2 rounded-lg bg-zinc-800 text-white focus-within:ring-2 focus-within:scale-[1.02] ring-purple-500 transition-all outline-none"
+              required
+            />
+            <div className="flex items-center mt-3">
+              <input
+                type="checkbox"
+                id="showPassword"
+                className="mr-2"
+                checked={showPassword}
+                onChange={() => setShowPassword((prev) => !prev)}
+              />
+              <label htmlFor="showPassword" className="text-white text-sm">
+                Show Password
+              </label>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2 mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-colors"
+          >
+            Register
+          </button>
+
+          {error && <p className="text-red-500 text-center">{error}</p>}
+        </form>
+
+        <p className="text-white text-sm mt-6">
+          Don't have an account?{" "}
+          <a
+            onClick={() => navigate("/login")}
+            className="text-purple-500 hover:underline cursor-pointer"
+          >
+            Login
+          </a>
+        </p>
+      </div>
     </div>
   );
 }

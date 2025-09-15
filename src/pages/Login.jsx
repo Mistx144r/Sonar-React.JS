@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import sonarLogo from "../imgs/Logo_Sonar_White.png";
 import axios from "axios";
+import { ArrowRight } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -91,19 +92,31 @@ export default function Login() {
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full py-2 mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-colors"
-          >
-            Login
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="submit"
+              className="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-colors"
+            >
+              Login
+            </button>
+
+            <button
+              type="button"
+              className="flex-1 bg-purple-600 hover:bg-purple-700 p-1 rounded-lg transition-colors"
+            >
+              <ArrowRight className="text-white" />
+            </button>
+          </div>
 
           {error && <p className="text-red-500 text-center">{error}</p>}
         </form>
 
         <p className="text-white text-sm mt-6">
           Don't have an account?{" "}
-          <a href="/register" className="text-purple-500 hover:underline">
+          <a
+            onClick={() => navigate("/register")}
+            className="text-purple-500 hover:underline cursor-pointer"
+          >
             Sign-Up
           </a>
         </p>

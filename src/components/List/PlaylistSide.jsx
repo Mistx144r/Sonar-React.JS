@@ -54,7 +54,7 @@ function PlaylistsSide({
         <ImageWithPlaceholder
           src={coverCDN || nosong}
           alt={"Cover"}
-          size={15}
+          size={48}
         />
         <div className="absolute left-[120%] top-0 w-[200px] p-2 bg-zinc-800 text-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-[20]">
           <h1

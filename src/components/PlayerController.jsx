@@ -1,9 +1,11 @@
 import { usePlayer } from "../contexts/PlayerContext.jsx";
 import {
+  Circle,
   CircleCheck,
   CirclePlay,
   CirclePlus,
   Disc,
+  ListPlus,
   Maximize,
   MicVocal,
   Minimize,
@@ -17,11 +19,14 @@ import {
   Volume1,
   Volume2,
   VolumeX,
+  X,
 } from "lucide-react";
 import nosong from "../imgs/nosong.jpg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ImageWithPlaceholder from "./album/ImageWithPlaceholder.jsx";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function PlayerController() {
   const {
@@ -43,6 +48,8 @@ function PlayerController() {
     loop,
     isLoopedState,
     isQueueLoopedState,
+    isLyricsOpen,
+    setLyricsOpen,
   } = usePlayer();
 
   const [isFullscreen, setFullscreen] = useState(false);
@@ -94,10 +101,256 @@ function PlayerController() {
     navigate(`/album/${currentMusic.albumId}`);
   }
 
+  const token = JSON.parse(localStorage.getItem("userToken"));
+  const [isAddModalOpen, setIsAddModal] = useState(false);
+  const [userPlaylists, setUserPlaylists] = useState([]);
+  const [selectedPlaylists, setSelectedPlaylists] = useState([]);
+  const [selectedPlaylistsToRemove, setSelectedPlaylistsToRemove] = useState(
+    []
+  );
+
+  const toggleSelect = (playlistId) => {
+    setSelectedPlaylists((prev) =>
+      prev.includes(playlistId)
+        ? prev.filter((id) => id !== playlistId)
+        : [...prev, playlistId]
+    );
+  };
+
+  const toggleSelectDelete = (playlistId) => {
+    setSelectedPlaylistsToRemove((prev) =>
+      prev.includes(playlistId)
+        ? prev.filter((id) => id !== playlistId)
+        : [...prev, playlistId]
+    );
+  };
+
+  async function handleAddMusicToPlaylist() {
+    try {
+      const token = JSON.parse(localStorage.getItem("userToken"));
+
+      if (!token) {
+        console.warn("Nenhum token encontrado.");
+        return;
+      }
+
+      const playlistsResponse = await axios.get(
+        `${import.meta.env.VITE_SERVER_IP}/playlists/user`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.token.token}`,
+          },
+        }
+      );
+
+      const playlists = playlistsResponse.data;
+
+      const playlistsWithMusics = await Promise.all(
+        playlists.map(async (playlist) => {
+          try {
+            const res = await axios.get(
+              `${import.meta.env.VITE_SERVER_IP}/playlistMusics/${playlist.id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token.token.token}`,
+                },
+              }
+            );
+
+            const musicIds = res.data.map((item) => item.music.id);
+
+            return {
+              ...playlist,
+              musicIds,
+            };
+          } catch (err) {
+            console.error(
+              `Erro ao buscar músicas da playlist ${playlist.id}`,
+              err
+            );
+            return {
+              ...playlist,
+              musicIds: [],
+            };
+          }
+        })
+      );
+
+      setUserPlaylists(playlistsWithMusics);
+      setIsAddModal(true);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function handleInsertMusicIntoPlaylist(musicId, selectedPlaylists) {
+    try {
+      const token = JSON.parse(localStorage.getItem("userToken"));
+
+      if (!token) {
+        console.warn("Nenhum token encontrado.");
+        return;
+      }
+
+      if (!selectedPlaylists || selectedPlaylists.length === 0) {
+        console.warn("Nenhuma playlist selecionada.");
+        toast.warn("Nenhuma Playlist Selecionada!");
+        return;
+      }
+
+      const addPromise = Promise.all(
+        selectedPlaylists.map((playlistId) =>
+          axios.post(
+            `${import.meta.env.VITE_SERVER_IP}/playlistMusics`,
+            { playlistId, musicId },
+            { headers: { Authorization: `Bearer ${token.token.token}` } }
+          )
+        )
+      );
+
+      await toast.promise(addPromise, {
+        pending: "Adicionando música nas playlists...",
+        success: "Música adicionada com sucesso!",
+        error:
+          "Erro ao adicionar música em alguma playlist. (Veja se a música não está duplicada)",
+      });
+    } catch (error) {
+      console.error("Erro ao inserir música nas playlists:", error);
+    } finally {
+      setSelectedPlaylists([]);
+    }
+  }
+
+  async function handleRemoveMusicFromPlaylist(
+    musicId,
+    selectedPlaylistsToRemove
+  ) {
+    try {
+      const token = JSON.parse(localStorage.getItem("userToken"));
+      if (!token) return console.warn("Nenhum token encontrado.");
+      if (!selectedPlaylistsToRemove || selectedPlaylistsToRemove.length === 0)
+        return;
+
+      const removePromise = Promise.all(
+        selectedPlaylistsToRemove.map((playlistId) =>
+          axios.delete(
+            `${
+              import.meta.env.VITE_SERVER_IP
+            }/playlistMusics/${playlistId}/${musicId}`,
+            {
+              headers: { Authorization: `Bearer ${token.token.token}` },
+            }
+          )
+        )
+      );
+
+      await toast.promise(removePromise, {
+        pending: "Removendo música das playlists...",
+        success: "Música removida com sucesso!",
+        error: "Erro ao remover música de alguma playlist.",
+      });
+    } catch (error) {
+      console.error("Erro ao remover música das playlists:", error);
+    } finally {
+      setSelectedPlaylistsToRemove([]);
+    }
+  }
+
+  async function handlePlaylistChanges(musicId) {
+    if (selectedPlaylists.length > 0) {
+      await handleInsertMusicIntoPlaylist(musicId, selectedPlaylists);
+    }
+
+    if (selectedPlaylistsToRemove.length > 0) {
+      await handleRemoveMusicFromPlaylist(musicId, selectedPlaylistsToRemove);
+    }
+  }
+
   return (
     <>
+      {isAddModalOpen && (
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 animate-fadeIn">
+            <div className="bg-zinc-900 text-white rounded-2xl shadow-lg p-6 w-full max-w-lg">
+              <div className="flex gap-2 items-center justify-between mb-4">
+                <h2 className="text-xl font-bold">Selecione Uma Playlist:</h2>
+                <button
+                  onClick={() => {
+                    setIsAddModal(false);
+                    setSelectedPlaylists([]);
+                  }}
+                  className="hover:scale-125 transition-all"
+                >
+                  <X />
+                </button>
+              </div>
+
+              <div className="flex flex-col h-[30vh] overflow-y-auto">
+                {userPlaylists.map((playlist, index) => (
+                  <div
+                    key={index}
+                    className="flex w-full hover:bg-zinc-800 cursor-pointer rounded-md p-2 items-center justify-start transition-all"
+                  >
+                    <div className="flex items-center gap-2">
+                      <img
+                        className="w-12 h-12 rounded-lg"
+                        src={playlist.coverCDN || nosong}
+                      />
+                      <div className="flex flex-col">
+                        <h1 className="font-semibold text-sm">
+                          {playlist.name}
+                        </h1>
+                        <h1 className="text-xs text-neutral-400">
+                          {`${token.user.nome} • Playlist • ${playlist.musicIds.length} Músicas`}
+                        </h1>
+                      </div>
+                    </div>
+
+                    {playlist.musicIds.includes(currentMusic?.musicId) && (
+                      <button
+                        onClick={() => toggleSelectDelete(playlist.id)}
+                        className="ml-auto hover:scale-105 active:scale-100 transition-all"
+                      >
+                        {!selectedPlaylistsToRemove.includes(playlist.id) ? (
+                          <CircleCheck className="text-purple-500 transition-all animate-fadeIn" />
+                        ) : (
+                          <Circle className="text-red-500 animate-fadeIn" />
+                        )}
+                      </button>
+                    )}
+
+                    {!playlist.musicIds.includes(currentMusic?.musicId) && (
+                      <button
+                        onClick={() => toggleSelect(playlist.id)}
+                        className="ml-auto hover:scale-105 active:scale-100 transition-all"
+                      >
+                        {selectedPlaylists.includes(playlist.id) ? (
+                          <CircleCheck className="text-purple-500 transition-all animate-fadeIn" />
+                        ) : (
+                          <Circle className="animate-fadeIn" />
+                        )}
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => {
+                    handlePlaylistChanges(currentMusic?.musicId);
+                    setIsAddModal(false);
+                  }}
+                  className="bg-purple-600 p-2 rounded-lg hover:bg-purple-700 transition-all"
+                >
+                  Pronto
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
       <audio preload="auto" ref={howlRef} />
-      <div className="fixed flex w-screen h-24 bg-playerController bottom-0 items-center justify-between py-5 px-5">
+      <div className="fixed flex w-screen h-24 bg-playerController bottom-0 items-center justify-between py-5 px-5 z-30">
         {currentMusic && (
           <>
             <div className="flex h-full text-white gap-3 items-center">
@@ -108,7 +361,7 @@ function PlayerController() {
                 <ImageWithPlaceholder
                   src={currentMusic?.musicAlbumCDN || nosong}
                   alt={"Song Cover"}
-                  size={12}
+                  size={64}
                 />
               </div>
               <div className="flex flex-col items-baseline justify-center">
@@ -126,8 +379,11 @@ function PlayerController() {
                 </p>
               </div>
               {!currentMusic?.isMusicLikedByUser && (
-                <button className="transition-all scale-[.85] hover:scale-[.90] active:scale-[.8] hover:text-purple-500">
-                  <CirclePlus />
+                <button
+                  onClick={handleAddMusicToPlaylist}
+                  className="transition-all scale-[.85] hover:scale-[.90] active:scale-[.8] hover:text-purple-500"
+                >
+                  <ListPlus />
                 </button>
               )}
 
@@ -244,9 +500,22 @@ function PlayerController() {
               <Disc />
             </button>
           )}
-          <button className="hover:scale-105 active:scale-100 cursor-pointer transition-all">
-            <MicVocal />
-          </button>
+          {isLyricsOpen && (
+            <button
+              onClick={() => setLyricsOpen(false)}
+              className="hover:scale-105 active:scale-100 cursor-pointer transition-all text-purple-500"
+            >
+              <MicVocal />
+            </button>
+          )}
+          {!isLyricsOpen && (
+            <button
+              onClick={() => setLyricsOpen(true)}
+              className="hover:scale-105 active:scale-100 cursor-pointer transition-all"
+            >
+              <MicVocal />
+            </button>
+          )}
           <div className="flex gap-3 items-center">
             <button
               onClick={() =>
