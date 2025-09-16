@@ -96,10 +96,6 @@ VITE_SERVER_IP=http://localhost:3000
 
 ---
 
-> Futuro: Integração com Redis + RabbitMQ para cache e filas de uploads.
-
----
-
 ## Futuro do Projeto
 Algumas melhorias planejadas para as próximas versões do frontend:  
 
