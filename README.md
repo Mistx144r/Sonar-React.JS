@@ -21,10 +21,11 @@ O **Sonar Frontend** permite ao usuário:
 - [Funcionalidades](#funcionalidades)  
 - [Instalação e Configuração](#instalação-e-configuração)  
 - [Variáveis de Ambiente](#variáveis-de-ambiente)  
-- [Arquitetura](#arquitetura)  
 - [Futuro do Projeto](#futuro-do-projeto)  
 - [Contribuição](#contribuição)  
-- [Autor](#autor)  
+- [Autor](#autor)
+
+- [Sonar-Front](https://github.com/Mistx144r/Sonar-React.JS/tree/main)
 
 ---
 
